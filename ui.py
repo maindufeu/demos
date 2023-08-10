@@ -1,22 +1,9 @@
 import streamlit as st
 import pandas as pd
-from requests_toolbelt.multipart.encoder import MultipartEncoder
 import requests
 
 # FastAPI endpoint
 backend = 'http://fastapi:8008/qas/'
-
-def process(context: str, question: str, key: str, server_url: str):
-
-    m = MultipartEncoder(
-        fields={'context': context, 'question': question, 'key' : key}
-        )
-    r = requests.post(server_url,
-                      data=m,
-                      params=m.fields,
-                      headers={'Content-Type': m.content_type},
-                      timeout=8000)
-    return r
 
 # UI layout
 
