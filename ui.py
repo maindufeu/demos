@@ -23,6 +23,6 @@ if uploaded_file is not None:
             found)
         st.write('You selected:', correct)
         refused = list(set(found) - set(correct))
-        user_input_context = st.text_area(f"Por qué {options} son correctas:")
+        user_input_context = st.text_area(f"Por qué {correct} son correctas:")
         user_input_question = st.text_area(f"Por qué {refused} son correctas:")
         
