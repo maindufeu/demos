@@ -1,5 +1,5 @@
-
 import streamlit as st
+import pandas as pd
 from requests_toolbelt.multipart.encoder import MultipartEncoder
 import requests
 
@@ -19,29 +19,23 @@ def process(context: str, question: str, key: str, server_url: str):
     return r
 
 # UI layout
-st.title('Question Answering')
-st.write('''Question Answering.
+
+st.title('Framework de entrenamiento semisupervisado')
+st.write('''Cargue su documento de relación para empezar el entrenamiento.
          Visit this URL at `:8008/docs` for FastAPI documentation.''')  # description and instructions
 
-user_input_key = st.text_area("openai key:")
-user_input_context = st.text_area("Context:")
-user_input_question = st.text_area("Question:")
-
-if st.button('Get Answering'):
-
-    if user_input_context and user_input_question and user_input_key:
-
-        result = process(user_input_context, user_input_question, user_input_key, backend)
-        st.write(f'Respuesta:    {result.content}')
-
-    elif user_input_context:
-        # handle case with no question
-        st.write("Insert question!")
-
-    elif user_input_context:
-        # handle case with context
-        st.write("Insert context!")
-
-    else:
-        # handle case with no question & context
-        st.write("Insert context and question!")
+uploaded_file = st.file_uploader("Choose a .csv file")
+if uploaded_file is not None:
+    df = pd.read_csv(uploaded_file)
+    dict = df.groupby('TKT NAME')['OPCIONES'].apply(list).to_dict()
+    for i in dict:
+        st.write(i)
+        found = dict[i]
+        correct = st.multiselect(
+            'Cuál de las siguientes es correcta',
+            found)
+        st.write('You selected:', correct)
+        refused = list(set(found) - set(correct))
+        user_input_context = st.text_area(f"Por qué {options} son correctas:")
+        user_input_question = st.text_area(f"Por qué {refused} son correctas:")
+        
